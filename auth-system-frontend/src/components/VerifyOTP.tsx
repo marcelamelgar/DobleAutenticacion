@@ -1,49 +1,59 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const VerifyOTP = () => {
-    const [formData, setFormData] = useState({ email: '', otp: '' });
-    const [message, setMessage] = useState('');
+    const location = useLocation();
+    const emailFromRegister = location.state?.email || '';
+    const [formData, setFormData] = useState({ email: emailFromRegister, otp: '' });
+    const [errorMessage, setErrorMessage] = useState('');
+    const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post('http://localhost:4000/verify-otp', formData);
-            setMessage('Código verificado con éxito. Ya puedes iniciar sesión.');
+            await axios.post('http://localhost:4000/verify-otp', formData);
+            setErrorMessage('');
+            navigate('/registration-success');
         } catch (err) {
-            setMessage(err.response?.data || 'Error al verificar el código.');
+            setErrorMessage('El código OTP ingresado es incorrecto. Inténtalo de nuevo.');
         }
     };
 
     return (
-        <div className="container mt-5">
-            <h2>Verificación de Código OTP</h2>
-            <form onSubmit={handleSubmit}>
-                <div className="form-group">
-                    <label>Correo Electrónico</label>
-                    <input
-                        type="email"
-                        className="form-control"
-                        placeholder="Ingresa tu correo"
-                        value={formData.email}
-                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                        required
-                    />
-                </div>
-                <div className="form-group mt-3">
-                    <label>Código OTP</label>
-                    <input
-                        type="text"
-                        className="form-control"
-                        placeholder="Ingresa el código OTP"
-                        value={formData.otp}
-                        onChange={(e) => setFormData({ ...formData, otp: e.target.value })}
-                        required
-                    />
-                </div>
-                <button type="submit" className="btn btn-primary mt-3">Verificar</button>
-            </form>
-            {message && <p className="mt-3">{message}</p>}
+        <div className="d-flex align-items-center justify-content-center vh-100" style={{ backgroundColor: '#001f3f' }}>
+            <div className="card p-4" style={{ width: '100%', maxWidth: '400px', borderRadius: '10px' }}>
+                <h2 className="text-center mb-4">Verificar OTP</h2>
+                <form onSubmit={handleSubmit}>
+                    <div className="form-group mb-3">
+                        <label htmlFor="email" className="form-label">Correo Electrónico</label>
+                        <input
+                            type="email"
+                            id="email"
+                            className="form-control"
+                            placeholder="Ingresa tu correo"
+                            value={formData.email}
+                            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                            required
+                            disabled
+                        />
+                    </div>
+                    <div className="form-group mb-4">
+                        <label htmlFor="otp" className="form-label">Código OTP</label>
+                        <input
+                            type="text"
+                            id="otp"
+                            className="form-control"
+                            placeholder="Ingresa el código OTP"
+                            value={formData.otp}
+                            onChange={(e) => setFormData({ ...formData, otp: e.target.value })}
+                            required
+                        />
+                        {errorMessage && <small className="text-danger">{errorMessage}</small>}
+                    </div>
+                    <button type="submit" className="btn btn-primary w-100">Verificar</button>
+                </form>
+            </div>
         </div>
     );
 };

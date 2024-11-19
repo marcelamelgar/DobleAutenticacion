@@ -1,18 +1,19 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import Register from './Register'; // Componente de registro
-import VerifyOTP from './VerifyOTP'; // Componente de verificación de OTP
+import Register from './components/Register.tsx';
+import VerifyOTP from './components/VerifyOTP.tsx';
+import Login from './components/Login.tsx';
+import RegistrationSuccess from './components/RegistrationSuccess.tsx';
 
 const App = () => {
     return (
         <Router>
-            <div className="container">
-                <h1 className="mt-5">Sistema de Autenticación</h1>
-                <Routes>
-                    <Route path="/" element={<Register />} />
-                    <Route path="/verify-otp" element={<VerifyOTP />} />
-                </Routes>
-            </div>
+            <Routes>
+                <Route path="/" element={<Register />} />
+                <Route path="/verify-otp" element={<VerifyOTP />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/registration-success" element={<RegistrationSuccess />} />
+            </Routes>
         </Router>
     );
 };
